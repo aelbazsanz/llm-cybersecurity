@@ -34,3 +34,5 @@ models/
 
 # Logs
 *.log
+logs/*
+!logs/.gitkeep
