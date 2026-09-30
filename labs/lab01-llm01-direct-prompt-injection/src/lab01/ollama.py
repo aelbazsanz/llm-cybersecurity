@@ -12,28 +12,34 @@ class ChatResult:
 
 
 class OllamaClient:
-    def __init__(self, host: str, model: str) -> None:
+    def __init__(
+        self,
+        host: str,
+        model: str,
+        system_prompt: str,
+    ) -> None:
         self.host = host.rstrip("/")
         self.model = model
 
-    def chat(
-        self,
-        system_prompt: str,
-        user_prompt: str,
-    ) -> ChatResult:
+        self.messages: list[dict[str, str]] = [
+            {
+                "role": "system",
+                "content": system_prompt,
+            }
+        ]
+
+    def chat(self, user_prompt: str) -> ChatResult:
+        self.messages.append(
+            {
+                "role": "user",
+                "content": user_prompt,
+            }
+        )
+
         payload = {
             "model": self.model,
             "stream": False,
-            "messages": [
-                {
-                    "role": "system",
-                    "content": system_prompt,
-                },
-                {
-                    "role": "user",
-                    "content": user_prompt,
-                },
-            ],
+            "messages": self.messages,
         }
 
         start = time.perf_counter()
@@ -52,8 +58,17 @@ class OllamaClient:
 
         data = response.json()
 
+        assistant_response = data["message"]["content"]
+
+        self.messages.append(
+            {
+                "role": "assistant",
+                "content": assistant_response,
+            }
+        )
+
         return ChatResult(
             model=data["model"],
-            response=data["message"]["content"],
+            response=assistant_response,
             duration_ms=duration_ms,
         )

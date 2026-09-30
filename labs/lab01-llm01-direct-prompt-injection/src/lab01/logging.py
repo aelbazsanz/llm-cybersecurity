@@ -4,9 +4,15 @@ from pathlib import Path
 from uuid import uuid4
 
 
+def create_session_id() -> str:
+    return uuid4().hex
+
+
 def log_interaction(
     log_directory: str,
     *,
+    session_id: str,
+    turn: int,
     model: str,
     attack_type: str,
     technique: str | None,
@@ -14,16 +20,18 @@ def log_interaction(
     user_prompt: str,
     response: str,
     duration_ms: int,
+    success: bool,
+    success_reason: str,
 ) -> Path:
     directory = Path(log_directory)
     directory.mkdir(parents=True, exist_ok=True)
 
     timestamp = datetime.now(timezone.utc)
-    session_id = uuid4().hex
 
     record = {
         "timestamp": timestamp.isoformat(),
         "session_id": session_id,
+        "turn": turn,
         "model": model,
         "attack_type": attack_type,
         "technique": technique,
@@ -31,17 +39,19 @@ def log_interaction(
         "user_prompt": user_prompt,
         "response": response,
         "duration_ms": duration_ms,
+        "success": success,
+        "success_reason": success_reason,
     }
 
-    filename = (
-        f"{timestamp.strftime('%Y%m%dT%H%M%SZ')}"
-        f"-{session_id}.jsonl"
-    )
+    path = directory / f"{session_id}.jsonl"
 
-    path = directory / filename
-
-    with path.open("w", encoding="utf-8") as file:
-        file.write(json.dumps(record, ensure_ascii=False))
+    with path.open("a", encoding="utf-8") as file:
+        file.write(
+            json.dumps(
+                record,
+                ensure_ascii=False,
+            )
+        )
         file.write("\n")
 
     return path
