@@ -2,8 +2,15 @@ import argparse
 
 from lab01.config import Config
 from lab01.evaluator import evaluate_response
-from lab01.logging import create_session_id, log_interaction
+from lab01.logging import (
+    create_run_id,
+    create_session_id,
+    log_interaction,
+)
 from lab01.ollama import OllamaClient
+
+
+LAB_ID = "LLM01-DPI"
 
 
 SYSTEM_PROMPT = """\
@@ -31,6 +38,18 @@ def parse_arguments() -> argparse.Namespace:
     )
 
     parser.add_argument(
+        "--experiment-id",
+        default=None,
+        help="Experiment identifier, for example EXP-01",
+    )
+
+    parser.add_argument(
+        "--experiment-name",
+        default=None,
+        help="Human-readable experiment name",
+    )
+
+    parser.add_argument(
         "--technique",
         default=None,
         help="Specific injection technique being tested",
@@ -51,6 +70,7 @@ def main() -> None:
 
     model = args.model or config.ollama_model
 
+    run_id = create_run_id()
     session_id = create_session_id()
     turn = 0
     log_path = None
@@ -58,6 +78,8 @@ def main() -> None:
     print("LLM01:2025 - Direct Prompt Injection")
     print("=" * 42)
     print(f"Model: {model}")
+    print(f"Experiment: {args.experiment_id or 'none'}")
+    print(f"Run ID: {run_id}")
     print(f"Attack type: {args.attack_type}")
     print(f"Technique: {args.technique}")
     print(f"Session ID: {session_id}")
@@ -114,6 +136,10 @@ def main() -> None:
 
         log_path = log_interaction(
             config.log_directory,
+            lab_id=LAB_ID,
+            experiment_id=args.experiment_id,
+            experiment_name=args.experiment_name,
+            run_id=run_id,
             session_id=session_id,
             turn=turn,
             model=result.model,
@@ -125,6 +151,7 @@ def main() -> None:
             duration_ms=result.duration_ms,
             success=evaluation.success,
             success_reason=evaluation.success_reason,
+            detection_method=evaluation.detection_method,
         )
 
 
