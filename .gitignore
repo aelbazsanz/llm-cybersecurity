@@ -36,3 +36,10 @@ models/
 *.log
 logs/*
 !logs/.gitkeep
+
+# Audit reports / generated evidence
+labs/*-audit/reports/*
+!labs/*-audit/reports/.gitkeep
+
+labs/*-audit/evidence/*
+!labs/*-audit/evidence/.gitkeep
