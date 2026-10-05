@@ -92,19 +92,30 @@ The repository contains:
 
 ### Local only
 
-The following artifacts are generated locally and are excluded from Git:
+The following artifacts are generated locally when the audit tool runs and are
+excluded from Git (via .gitignore):
 
 ```text
-logs/
 evidence/
 reports/
 ```
 
+The `evidence/` directory contains a copy of the JSONL evidence files used for
+the audit, and the `reports/` directory contains one or more Markdown audit
+reports.
+
+These are generated under the audit laboratory's own directory, not under the
+attack laboratory's directory. This keeps the audit laboratory independent:
+the audit lab consumes JSONL evidence from the attack laboratory and stores its
+own output locally.
+
 This is intentional.
 
-The repository provides the **audit methodology and tooling**, while each user generates their own evidence and reports from their own experiments.
+The repository provides the **audit methodology and tooling**, while each user
+generates their own evidence and reports from their own experiments.
 
-This avoids committing model-specific, environment-specific, or potentially sensitive experiment output.
+This avoids committing model-specific, environment-specific, or potentially
+sensitive experiment output.
 
 ## Requirements
 
@@ -123,13 +134,25 @@ uv sync
 
 ## Running the Audit
 
-The audit tool receives the directory containing the attack laboratory JSONL evidence.
+The audit tool receives the directory containing the attack laboratory JSONL
+evidence and writes its output to the audit laboratory's local
+`evidence/` and `reports/` directories.
 
 Example:
 
 ```bash
 uv run lab01-audit \
   --evidence ../lab01-llm01-direct-prompt-injection/logs
+```
+
+By default, evidence is written to `./evidence/` and reports are written to
+`./reports/` under the audit laboratory's directory. Use `--output-dir` to
+specify a different location:
+
+```bash
+uv run lab01-audit \
+  --evidence ../lab01-llm01-direct-prompt-injection/logs \
+  --output-dir ./audit-output
 ```
 
 The audit tool discovers the available evidence automatically.
@@ -140,19 +163,33 @@ For example, an execution may report:
 LLM01:2025 Audit
 ========================================
 
-Evidence directory: ../lab01-llm01-direct-prompt-injection/logs
+Finding: LLM01-DPI-001
+Title:   Direct prompt injection causes protected information disclosure
+Status:  Confirmed
 
-Interactions: 19
-Experiments:  11
-Runs:         12
-Sessions:     12
-Successful:   6
-Failed:       13
+Evidence directory: /path/to/llm-cybersecurity/labs/lab01-llm01-audit/evidence
+Report: /path/to/llm-cybersecurity/labs/lab01-llm01-audit/reports/LLM01-DPI-001.md
 
-Models:
-  - llama-guard3:8b
-  - phi4-mini:latest
-  - qwen3:8b
+Overview:
+  Experiments: 11
+  Runs: 11
+  Sessions: 11
+  Models: 3
+  Attack types: direct-prompt-injection
+  Techniques: instruction-extraction, instruction-override, multi-turn-injection, persona-manipulation
+  Total interactions: 18
+  Successful attacks: 6
+  Baseline interactions: 2
+  Impact: Protected laboratory information was disclosed in model output during direct prompt injection experiments.
+
+Framework Mappings:
+  - OWASP: LLM01:2025 — Prompt Injection
+  - OWASP: LLM02:2025 — Sensitive Information Disclosure
+  - MITRE ATLAS: AML.T0051.000 — LLM Prompt Injection: Direct
+
+Generated reports are in: /path/to/llm-cybersecurity/labs/lab01-llm01-audit/reports
+Evidence is stored in: /path/to/llm-cybersecurity/labs/lab01-llm01-audit/evidence
+Reports are not committed to the repository (local only).
 ```
 
 The exact results depend on the experiments and models executed by the user.

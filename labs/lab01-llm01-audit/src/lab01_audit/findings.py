@@ -1,6 +1,7 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from lab01_audit.loader import Interaction
+from lab01_audit.mappings import FrameworkMapping
 
 
 @dataclass(frozen=True)
@@ -25,6 +26,11 @@ class Finding:
     baseline_evidence: tuple[Interaction, ...]
 
     impact: str
+    mitigations: tuple[str, ...] = field(default_factory=tuple)
+    mappings: tuple[FrameworkMapping, ...] = field(default_factory=tuple)
+
+
+from lab01_audit.mappings import DIRECT_PROMPT_INJECTION_MAPPINGS
 
 
 def create_direct_prompt_injection_finding(
@@ -130,4 +136,5 @@ def create_direct_prompt_injection_finding(
         attack_evidence=tuple(successful_attack),
         baseline_evidence=tuple(baseline),
         impact=impact,
+        mappings=DIRECT_PROMPT_INJECTION_MAPPINGS,
     )
