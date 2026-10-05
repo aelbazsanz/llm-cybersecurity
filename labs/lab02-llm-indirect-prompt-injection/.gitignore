@@ -1,0 +1,15 @@
+# Local data (experiment output)
+logs/
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environment
+.venv/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/

@@ -24,7 +24,11 @@
       "Bash(tail *)",
       "Bash(mkdir *)",
       "Bash(cp *)",
-      "Bash(wc *)"
+      "Bash(wc *)",
+      "Bash(uv run *)",
+      "Bash(docker compose *)",
+      "Bash(curl -s http://localhost:11434/api/tags)",
+      "Bash(git reset *)"
     ],
     "deny": [
       "Bash(rm -rf *)",
