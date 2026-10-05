@@ -145,6 +145,7 @@ The first version of a laboratory may intentionally contain a vulnerable impleme
 | --- | --- | --- | --- |
 | [Lab 01](labs/lab01-llm01-direct-prompt-injection/) | Direct Prompt Injection | LLM01:2025 | Attack |
 | [Lab 01 Audit](labs/lab01-llm01-audit/) | Findings & Framework Mapping | LLM01:2025, LLM02:2025 | Audit |
+| [Lab 01 Mitigations](labs/lab01-llm01-mitigations/) | Output Validation Mitigation | LLM01:2025 | Mitigation |
 | ... | ... | ... | ... |
 
 This table will be extended as new laboratories are added.
