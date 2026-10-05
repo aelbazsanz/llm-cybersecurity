@@ -421,7 +421,6 @@ The intended project structure is:
 ```text
 labs/
 ├── lab01-llm01-direct-prompt-injection/
-├── lab01-llm01-indirect-prompt-injection/
 └── lab01-llm01-audit/
 ```
 
