@@ -34,10 +34,13 @@ llm-cybersecurity/
 │   └── INFRASTRUCTURE.md
 │
 ├── labs/
-│   ├── lab01-llm01-prompt-injection/
+│   ├── lab01-llm01-direct-prompt-injection/     # Attack laboratory
+│   ├── lab01-llm01-audit/                       # Audit laboratory
 │   └── ...
 │
-└── README.md
+├── README.md
+├── CLAUDE.md
+└── .gitignore
 ```
 
 ### `infrastructure/`
@@ -55,6 +58,13 @@ See [`infrastructure/INFRASTRUCTURE.md`](infrastructure/INFRASTRUCTURE.md) for s
 Contains the individual security laboratories.
 
 Each laboratory is designed to be as self-contained and reproducible as possible and includes its own documentation, Python environment and application code.
+
+Two types of laboratories exist:
+
+* **Attack laboratories** — reproduce LLM security vulnerabilities and generate JSONL evidence.
+* **Audit laboratories** — analyze the JSONL evidence, generate structured findings, and map them to security frameworks.
+
+The audit laboratory is an independent project: it consumes evidence from the attack laboratory and stores its own output locally (in `evidence/` and `reports/`), which are excluded from version control.
 
 ---
 
@@ -131,12 +141,15 @@ The first version of a laboratory may intentionally contain a vulnerable impleme
 
 ## Laboratories
 
-| Lab                                          | Topic            | OWASP      |
-| -------------------------------------------- | ---------------- | ---------- |
-| [Lab 01](labs/lab01-llm01-prompt-injection/) | Prompt Injection | LLM01:2025 |
-| ...                                          | ...              | ...        |
+| Lab | Topic | OWASP | Type |
+| --- | --- | --- | --- |
+| [Lab 01](labs/lab01-llm01-direct-prompt-injection/) | Direct Prompt Injection | LLM01:2025 | Attack |
+| [Lab 01 Audit](labs/lab01-llm01-audit/) | Findings & Framework Mapping | LLM01:2025, LLM02:2025 | Audit |
+| ... | ... | ... | ... |
 
 This table will be extended as new laboratories are added.
+
+Each attack laboratory is typically paired with an audit laboratory. The attack laboratory reproduces the vulnerability and generates JSONL evidence; the audit laboratory analyzes that evidence, generates structured findings, and maps them to security frameworks.
 
 ---
 
