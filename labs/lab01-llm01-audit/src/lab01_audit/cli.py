@@ -1,5 +1,8 @@
 import argparse
 
+from lab01_audit.findings import (
+    create_direct_prompt_injection_finding,
+)
 from lab01_audit.loader import load_interactions
 
 
@@ -22,54 +25,65 @@ def main() -> None:
 
     interactions = load_interactions(args.evidence)
 
-    experiment_ids = {
-        interaction.experiment_id
-        for interaction in interactions
-        if interaction.experiment_id is not None
-    }
-
-    run_ids = {
-        interaction.run_id
-        for interaction in interactions
-    }
-
-    session_ids = {
-        interaction.session_id
-        for interaction in interactions
-    }
-
-    models = sorted(
-        {
-            interaction.model
-            for interaction in interactions
-        }
-    )
-
-    successful_interactions = sum(
-        interaction.success
-        for interaction in interactions
+    finding = create_direct_prompt_injection_finding(
+        interactions
     )
 
     print("LLM01:2025 Audit")
     print("=" * 40)
     print()
-    print(f"Evidence directory: {args.evidence}")
+
+    print(f"Finding: {finding.finding_id}")
+    print(f"Title:   {finding.title}")
+    print(f"Status:  {finding.status}")
     print()
-    print(f"Interactions: {len(interactions)}")
-    print(f"Experiments:  {len(experiment_ids)}")
-    print(f"Runs:         {len(run_ids)}")
-    print(f"Sessions:     {len(session_ids)}")
-    print(
-        f"Successful:   {successful_interactions}"
-    )
-    print(
-        f"Failed:       {len(interactions) - successful_interactions}"
-    )
+
+    print(f"Lab:          {finding.lab_id}")
+    print(f"Experiments:  {len(finding.experiments)}")
+    print(f"Runs:         {len(finding.runs)}")
+    print(f"Sessions:     {len(finding.sessions)}")
     print()
+
     print("Models:")
 
-    for model in models:
+    for model in finding.models:
         print(f"  - {model}")
+
+    print()
+
+    print("Attack types:")
+
+    for attack_type in finding.attack_types:
+        print(f"  - {attack_type}")
+
+    print()
+
+    print("Techniques:")
+
+    for technique in finding.techniques:
+        print(f"  - {technique}")
+
+    print()
+
+    print(
+        "Attack interactions: "
+        f"{finding.total_attack_interactions}"
+    )
+
+    print(
+        "Successful attacks:  "
+        f"{finding.successful_attack_interactions}"
+    )
+
+    print(
+        "Baseline interactions: "
+        f"{len(finding.baseline_evidence)}"
+    )
+
+    print()
+
+    print("Impact:")
+    print(f"  {finding.impact}")
 
 
 if __name__ == "__main__":
